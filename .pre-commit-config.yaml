@@ -1,0 +1,47 @@
+repos:
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.37.3
+    hooks:
+      - id: pyupgrade
+        args: 
+          - --py37-plus
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args:
+          - --profile=black
+          - --skip-glob=wandb/**/*
+          - --thirdparty=wandb
+  - repo: https://github.com/myint/autoflake
+    rev: v1.4
+    hooks:
+      - id: autoflake
+        args:
+          - -r
+          - --exclude=wandb, __init__.py
+          - --in-place
+          - --remove-unused-variables
+          - --remove-all-unused-imports
+  - repo: https://github.com/google/yapf
+    rev: v0.32.0
+    hooks:
+      - id: yapf
+        args:
+          - --style=yapf
+          - --in-place
+          - --recursive
+          - --exclude=wandb, __init__.py
+  # - repo: https://github.com/python/black
+  #   rev: 22.3.0
+  #   hooks:
+  #     - id: black
+  #       args:
+  #         - --line-length=80
+  #         - --exclude=wandb
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.0
+    hooks:
+      - id: codespell
+        args:
+          - -L=ot

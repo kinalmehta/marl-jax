@@ -1,0 +1,55 @@
+immutabledict
+networkx
+rx
+ml_collections
+natsort
+matplotlib
+wandb
+opencv-contrib-python
+
+# gym imports
+gym==0.25.2
+atari-py
+bsuite
+dm-control
+pygame==2.1.0
+overcooked-ai==1.1.0
+
+# DM Core
+absl-py
+numpy
+pillow
+typing-extensions
+dm-env
+dm-tree
+dm-reverb==0.7.2
+dm-launchpad==0.5.2
+
+# tensorflow imports
+keras==2.8.0
+tensorflow-datasets==4.5.2
+tensorflow-estimator==2.8.0
+tensorflow==2.8.0
+tensorflow_probability==0.15.0
+rlds
+tensorboard
+tensorflow_datasets
+dm-sonnet
+trfl
+
+# jax imports
+jax[cuda11_cudnn82]==0.4.1
+-f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+chex
+dm-haiku
+flax
+optax
+rlax
+
+# plot imports
+pandas
+matplotlib
+expt
+
+# Optional
+pre-commit
