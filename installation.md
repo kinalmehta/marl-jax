@@ -17,7 +17,7 @@
   STEPS="10000"
   SEED="0"
   docker run --gpus all --name ${EXP_NAME} -v $(pwd):/root/code ${CONTAINER_TAG} \
-	misc_scripts/train.py --async_distributed \
+	train.py --async_distributed \
 	--num_actors ${ACTORS} --available_gpus ${AVAIL_GPUS} \
 	--algo_name ${ALGO} --env_name ${ENV_NAME} --map_name ${MAP_NAME} \
   --num_steps ${STEPS} --seed ${SEED}
@@ -75,6 +75,6 @@
   ```
 - Run IMPALA on `prisoners_dilemma_in_the_matrix__repeated`
 	```bash
-	CUDA_VISIBLE_DEVICES=-1 python misc_scripts/train.py --async_distributed --available_gpus 0 --num_actors 2 \
+	CUDA_VISIBLE_DEVICES=-1 python train.py --async_distributed --available_gpus 0 --num_actors 2 \
   --algo_name IMPALA --env_name meltingpot --map_name prisoners_dilemma_in_the_matrix__repeated
 	```

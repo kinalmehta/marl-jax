@@ -33,17 +33,19 @@ flags.DEFINE_bool(
 flags.DEFINE_bool("run_eval", False, "Whether to run evaluation.")
 flags.DEFINE_enum(
     "env_name",
-    "rps",
-    ["meltingpot", "overcooked", "rps", "cleanup", "harvest"],
+    "ssd",
+    ["meltingpot", "overcooked", "ssd"],
     "Environment to train on",
 )
 flags.DEFINE_string(
-    "map_name", "",
-    "Meltingpot/Overcooked Map to train on. Only used when 'env_name' is 'meltingpot' or 'overcooked'"
+    "map_name", "cleanup",
+    "Meltingpot/Overcooked/SSD Map to train on. Only used when 'env_name' is 'meltingpot' or 'overcooked'"
 )
 flags.DEFINE_enum("algo_name", "IMPALA",
                   ["IMPALA", "PopArtIMPALA", "OPRE", "PopArtOPRE"],
                   "Algorithm to train")
+flags.DEFINE_bool("record_video", False,
+                  "Whether to record videos. (Only use during evaluation)")
 flags.DEFINE_integer("reward_scale", 1, "Reward scale factor.")
 flags.DEFINE_bool("prosocial", False,
                   "Whether to use shared reward for prosocial training.")
@@ -70,11 +72,11 @@ def build_experiment_config():
   # Create an environment, grab the spec, and use it to create networks.
 
   # creating the following values so that FLAGS doesn't need to be pickled
-  env_name = FLAGS.env_name
   map_name = FLAGS.map_name
   reward_scale = FLAGS.reward_scale
   autoreset = False
   prosocial = FLAGS.prosocial
+  record = FLAGS.record_video
 
   if FLAGS.experiment_dir:
     assert FLAGS.algo_name in FLAGS.experiment_dir, f"experiment_dir must be a {FLAGS.algo_name} experiment"
@@ -109,23 +111,18 @@ def build_experiment_config():
         map_name,
         autoreset=autoreset,
         reward_scale=reward_scale,
-        global_observation_sharing=True)
+        global_observation_sharing=True,
+        record=record)
     num_options = 8
-  elif FLAGS.env_name == "rps":
-    env_factory = lambda seed: helpers.make_rps_environment(
-        seed,
-        autoreset=autoreset,
-        reward_scale=reward_scale,
-        global_observation_sharing=True)
-    num_options = 8
-  elif FLAGS.env_name in ["cleanup", "harvest"]:
+  elif FLAGS.env_name == "ssd":
     env_factory = lambda seed: helpers.make_ssd_environment(
         seed,
-        env_name,
+        map_name,
         autoreset=autoreset,
         reward_scale=reward_scale,
         team_reward=prosocial,
-        global_observation_sharing=True)
+        global_observation_sharing=True,
+        record=record)
     feature_extractor = ImageFE
     num_options = 8
   elif FLAGS.env_name == "meltingpot":
@@ -135,7 +132,8 @@ def build_experiment_config():
         autoreset=autoreset,
         shared_reward=prosocial,
         reward_scale=reward_scale,
-        shared_obs=True)
+        shared_obs=True,
+        record=record)
     feature_extractor = MeltingpotFE
     num_options = 16
   else:
@@ -216,6 +214,7 @@ def build_experiment_config():
 
 
 def main(_):
+  assert not FLAGS.record_video, "Video recording is not supported during training"
   config, experiment_dir = build_experiment_config()
   if FLAGS.async_distributed:
     ckpt_config = ma_config.CheckpointingConfig(

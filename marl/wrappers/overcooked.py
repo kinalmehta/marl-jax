@@ -62,6 +62,7 @@ class OverCooked(dm_env.Environment):
 
   def reset(self) -> dm_env.TimeStep:
     self.env.reset()
+    self._reset_next_step = False
     observation = self._get_observation()
     ts = dm_env.restart(observation)
     rew = [np.array(0., dtype=np.float32) for _ in range(self.num_agents)]
