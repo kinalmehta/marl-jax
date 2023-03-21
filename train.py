@@ -33,12 +33,12 @@ flags.DEFINE_bool(
 flags.DEFINE_bool("run_eval", False, "Whether to run evaluation.")
 flags.DEFINE_enum(
     "env_name",
-    "ssd",
+    "overcooked",
     ["meltingpot", "overcooked", "ssd"],
     "Environment to train on",
 )
 flags.DEFINE_string(
-    "map_name", "cleanup",
+    "map_name", "cramped_room",
     "Meltingpot/Overcooked/SSD Map to train on. Only used when 'env_name' is 'meltingpot' or 'overcooked'"
 )
 flags.DEFINE_enum("algo_name", "IMPALA",
@@ -81,14 +81,12 @@ def build_experiment_config():
   if FLAGS.experiment_dir:
     assert FLAGS.algo_name in FLAGS.experiment_dir, f"experiment_dir must be a {FLAGS.algo_name} experiment"
     assert FLAGS.env_name in FLAGS.experiment_dir, f"experiment_dir must be a {FLAGS.env_name} experiment"
-    if FLAGS.env_name in {"overcooked", "meltingpot"}:
-      assert FLAGS.map_name in FLAGS.experiment_dir, f"experiment_dir must be a {FLAGS.env_name} experiment with map_name {FLAGS.map_name}"
+    assert FLAGS.map_name in FLAGS.experiment_dir, f"experiment_dir must be a {FLAGS.env_name} experiment with map_name {FLAGS.map_name}"
     experiment_dir = FLAGS.experiment_dir
     experiment_name = experiment_dir.split("/")[-1]
   else:
     experiment_name = f"{FLAGS.algo_name}_{FLAGS.seed}_{FLAGS.env_name}"
-    if FLAGS.env_name in ["overcooked", "meltingpot"]:
-      experiment_name += f"_{FLAGS.map_name}"
+    experiment_name += f"_{FLAGS.map_name}"
     experiment_name += f"_{datetime.datetime.now()}"
     experiment_name = experiment_name.replace(" ", "_")
     experiment_dir = os.path.join(FLAGS.exp_log_dir, experiment_name)
@@ -216,9 +214,9 @@ def build_experiment_config():
 def main(_):
   assert not FLAGS.record_video, "Video recording is not supported during training"
   config, experiment_dir = build_experiment_config()
+  ckpt_config = ma_config.CheckpointingConfig(
+      max_to_keep=3, directory=experiment_dir, add_uid=False)
   if FLAGS.async_distributed:
-    ckpt_config = ma_config.CheckpointingConfig(
-        max_to_keep=3, directory=experiment_dir, add_uid=False)
 
     nodes_on_gpu, gpu_actors = helpers.node_allocation(
         config.builder._config.n_agents, FLAGS.available_gpus)
@@ -237,7 +235,10 @@ def main(_):
         local_resources=local_resources,
     )
   else:
-    experiments.run_experiment(experiment=config, num_eval_episodes=0)
+    experiments.run_experiment(
+        experiment=config,
+        checkpointing_config=ckpt_config,
+        num_eval_episodes=0)
 
 
 if __name__ == "__main__":

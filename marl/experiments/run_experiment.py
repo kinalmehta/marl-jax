@@ -14,7 +14,7 @@ import dm_env
 import jax
 import reverb
 from acme import core, types
-from acme.jax import utils
+from acme.jax import savers, utils
 from acme.utils import counting
 
 from marl import specs as ma_specs
@@ -23,6 +23,7 @@ from marl.experiments import config as ma_config
 
 def run_experiment(
     experiment: ma_config.MAExperimentConfig,
+    checkpointing_config: ma_config.CheckpointingConfig,
     eval_every: int = 100,
     num_eval_episodes: int = 1,
 ):
@@ -86,6 +87,15 @@ def run_experiment(
       replay_client=replay_client,
       counter=counting.Counter(
           parent_counter, prefix="learner", time_delta=0.0),
+  )
+  learner = savers.CheckpointingRunner(
+      learner,
+      key="learner",
+      subdirectory="learner",
+      time_delta_minutes=checkpointing_config.model_time_delta_minutes,
+      directory=checkpointing_config.directory,
+      add_uid=checkpointing_config.add_uid,
+      max_to_keep=checkpointing_config.max_to_keep,
   )
 
   adder = experiment.builder.make_adder(replay_client, environment_specs,
