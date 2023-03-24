@@ -1,6 +1,9 @@
 # marl-jax
 JAX library for MARL research
 
+[Demo Video](https://youtu.be/WQVQXPIUZxk)
+[Paper Link]()
+
 ## Implemented Algorithms
 - [x] Independent-IMPALA for multi-agent environments
 - [x] [OPRE](https://www.deepmind.com/publications/options-as-responses-grounding-behavioural-hierarchies-in-multi-agent-rl)
