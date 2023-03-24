@@ -34,12 +34,12 @@ flags.DEFINE_bool("run_eval", False, "Whether to run evaluation.")
 flags.DEFINE_enum(
     "env_name",
     "overcooked",
-    ["meltingpot", "overcooked", "ssd"],
+    ["meltingpot", "overcooked"],
     "Environment to train on",
 )
 flags.DEFINE_string(
     "map_name", "cramped_room",
-    "Meltingpot/Overcooked/SSD Map to train on. Only used when 'env_name' is 'meltingpot' or 'overcooked'"
+    "Meltingpot/Overcooked Map to train on. Only used when 'env_name' is 'meltingpot' or 'overcooked'"
 )
 flags.DEFINE_enum("algo_name", "IMPALA",
                   ["IMPALA", "PopArtIMPALA", "OPRE", "PopArtOPRE"],
@@ -64,7 +64,7 @@ flags.DEFINE_integer(
     "num_actors", 2,
     "Number of actors to use (should be less than total number of CPU cores).")
 flags.DEFINE_string("experiment_dir", None,
-                    "Directory to restore experiment from.")
+                    "Directory to resume experiment from.")
 
 
 def build_experiment_config():
