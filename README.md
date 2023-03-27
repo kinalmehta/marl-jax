@@ -2,7 +2,7 @@
 JAX library for MARL research
 
 [Demo Video](https://youtu.be/WQVQXPIUZxk)
-[Paper Link]()
+[Paper Link](https://arxiv.org/abs/2303.13808)
 
 ## Implemented Algorithms
 - [x] Independent-IMPALA for multi-agent environments
@@ -32,5 +32,11 @@ JAX library for MARL research
 
 If you use this code in your project, please cite the following paper:
 ```bibtex
-
+@article{mehta2023marljax,
+      title={marl-jax: Multi-agent Reinforcement Leaning framework for Social Generalization}, 
+      author={Kinal Mehta and Anuj Mahajan and Pawan Kumar},
+      year={2023},
+      journal={arXiv preprint arXiv:2303.13808},
+      url={https://arxiv.org/abs/2303.13808},
+}
 ```
