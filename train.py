@@ -31,8 +31,10 @@ flags.DEFINE_bool(
     "Should an agent be executed in an off-policy distributed way",
 )
 flags.DEFINE_bool("run_eval", False, "Whether to run evaluation.")
-flags.DEFINE_bool("all_parallel", False,
-                  "Flag to run all agents in parallel using vmap.")
+flags.DEFINE_bool(
+    "all_parallel", False,
+    "Flag to run all agents in parallel using vmap. Only use if GPU with large memory is available."
+)
 flags.DEFINE_enum(
     "env_name",
     "overcooked",

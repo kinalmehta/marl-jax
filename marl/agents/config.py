@@ -17,7 +17,7 @@ class MAConfig:
 
   seed: int = 0
   discount: float = 0.99
-  sequence_length: int = 80
+  sequence_length: int = 40
   sequence_period: Optional[int] = None
   variable_update_period: int = 300
 
@@ -28,7 +28,7 @@ class MAConfig:
   use_parameter_sampling: bool = False
 
   # Optimizer configuration
-  batch_size: int = 64
+  batch_size: int = 32
   learning_rate: Union[float, optax.Schedule] = 4e-4
 
   rmsprop_decay: float = 0.99
