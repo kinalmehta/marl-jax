@@ -31,6 +31,10 @@ flags.DEFINE_bool(
     "Should an agent be executed in an off-policy distributed way",
 )
 flags.DEFINE_bool("run_eval", False, "Whether to run evaluation.")
+flags.DEFINE_bool(
+    "all_parallel", False,
+    "Flag to run all agents in parallel using vmap. Only use if GPU with large memory is available."
+)
 flags.DEFINE_enum(
     "env_name",
     "overcooked",
@@ -77,6 +81,7 @@ def build_experiment_config():
   autoreset = False
   prosocial = FLAGS.prosocial
   record = FLAGS.record_video
+  memory_efficient = not FLAGS.all_parallel
 
   if FLAGS.experiment_dir:
     assert FLAGS.algo_name in FLAGS.experiment_dir, f"experiment_dir must be a {FLAGS.algo_name} experiment"
@@ -146,7 +151,9 @@ def build_experiment_config():
     network = network_factory(
         environment_specs.get_single_agent_environment_specs())
     # Construct the agent.
-    config = impala.IMPALAConfig(n_agents=environment_specs.num_agents)
+    config = impala.IMPALAConfig(
+        n_agents=environment_specs.num_agents,
+        memory_efficient=memory_efficient)
     core_spec = network.initial_state_fn(jax.random.PRNGKey(0))
     builder = impala.IMPALABuilder(config, core_state_spec=core_spec)
   elif FLAGS.algo_name == "PopArtIMPALA":
@@ -156,7 +163,9 @@ def build_experiment_config():
     network = network_factory(
         environment_specs.get_single_agent_environment_specs())
     # Construct the agent.
-    config = impala.IMPALAConfig(n_agents=environment_specs.num_agents)
+    config = impala.IMPALAConfig(
+        n_agents=environment_specs.num_agents,
+        memory_efficient=memory_efficient)
     core_spec = network.initial_state_fn(jax.random.PRNGKey(0))
     builder = impala.PopArtIMPALABuilder(config, core_state_spec=core_spec)
 
@@ -170,7 +179,9 @@ def build_experiment_config():
         environment_specs.get_single_agent_environment_specs())
     # Construct the agent.
     config = opre.OPREConfig(
-        n_agents=environment_specs.num_agents, num_options=num_options)
+        n_agents=environment_specs.num_agents,
+        num_options=num_options,
+        memory_efficient=memory_efficient)
     core_spec = network.initial_state_fn(jax.random.PRNGKey(0))
     builder = opre.OPREBuilder(config, core_state_spec=core_spec)
   elif FLAGS.algo_name == "PopArtOPRE":
@@ -183,7 +194,9 @@ def build_experiment_config():
         environment_specs.get_single_agent_environment_specs())
     # Construct the agent.
     config = opre.OPREConfig(
-        n_agents=environment_specs.num_agents, num_options=num_options)
+        n_agents=environment_specs.num_agents,
+        num_options=num_options,
+        memory_efficient=memory_efficient)
     core_spec = network.initial_state_fn(jax.random.PRNGKey(0))
     builder = opre.PopArtOPREBuilder(config, core_state_spec=core_spec)
   else:

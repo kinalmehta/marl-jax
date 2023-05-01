@@ -117,8 +117,9 @@ class MABuilder(builders.ActorLearnerBuilder[types.RecurrentNetworks,
         max_in_flight_samples_per_worker=2 * batch_size_per_learner,
     )
     # return utils.device_put(dataset.as_numpy_iterator(), jax.local_devices()[0])
-    return utils.multi_device_put(dataset.as_numpy_iterator(),
-                                  jax.local_devices())
+    return dataset.as_numpy_iterator(
+    ) if self._config.memory_efficient else utils.multi_device_put(
+        dataset.as_numpy_iterator(), jax.local_devices())
 
   def make_adder(
       self,
@@ -196,13 +197,3 @@ class MABuilder(builders.ActorLearnerBuilder[types.RecurrentNetworks,
   ) -> types.RecurrentNetworks:
     del environment_spec, evaluation
     return networks
-    # def init(key):
-    #   return networks.initial_state_fn(key)
-    # def select_action(params, key, observations, state):
-    #   (logits, _), new_states = networks.forward_fn(params, observations, state)
-    #   if evaluation:
-    #     action = jnp.argmax(logits, axis=-1)
-    #   else:
-    #     action = jax.random.categorical(key, logits)
-    #   return action, (new_states, logits)
-    # return actor_core_lib.ActorCore(init=init, select_action=select_action, get_extras=None)

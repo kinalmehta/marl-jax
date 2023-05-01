@@ -14,7 +14,12 @@ from marl import specs as ma_specs
 from marl import types
 from marl.agents.builder import MABuilder
 from marl.agents.impala.config import IMPALAConfig
-from marl.agents.impala.learning import IMPALALearner, PopArtIMPALALearner
+from marl.agents.impala.learning import (
+    IMPALALearner,
+    IMPALALearnerME,
+    PopArtIMPALALearner,
+    PopArtIMPALALearnerME,
+)
 from marl.modules import popart_simple
 
 
@@ -53,7 +58,8 @@ class IMPALABuilder(MABuilder):
         ),
     )
 
-    return IMPALALearner(
+    learner = IMPALALearnerME if self._config.memory_efficient else IMPALALearner
+    return learner(
         network=networks,
         iterator=dataset,
         optimizer=optimizer,
@@ -121,7 +127,8 @@ class PopArtIMPALABuilder(MABuilder):
           axis_name=axis)
       return types.PopArtLayer(init_fn=init_fn, update_fn=update_fn)
 
-    return PopArtIMPALALearner(
+    learner = PopArtIMPALALearnerME if self._config.memory_efficient else PopArtIMPALALearner
+    return learner(
         network=networks,
         popart=(_art if self._config.only_art else _popart,
                 self._config.only_art),
