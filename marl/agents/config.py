@@ -13,11 +13,13 @@ from acme.adders import reverb as adders_reverb
 class MAConfig:
   """Configuration options for multi-agent RL."""
 
+  memory_efficient: bool = True
+
   seed: int = 0
   discount: float = 0.99
-  sequence_length: int = 20
+  sequence_length: int = 80
   sequence_period: Optional[int] = None
-  variable_update_period: int = 1000
+  variable_update_period: int = 300
 
   # Environment Details
   n_agents: int = None
@@ -26,13 +28,13 @@ class MAConfig:
   use_parameter_sampling: bool = False
 
   # Optimizer configuration
-  batch_size: int = 32
+  batch_size: int = 64
   learning_rate: Union[float, optax.Schedule] = 4e-4
 
   rmsprop_decay: float = 0.99
   rmsprop_eps: float = 1e-5
   rmsprop_momentum: float = 0
-  rmsprop_init: float = 0
+  rmsprop_init: float = 0.0
 
   max_gradient_norm: float = 2.0
 

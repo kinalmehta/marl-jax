@@ -14,7 +14,12 @@ from marl import specs as ma_specs
 from marl import types
 from marl.agents.builder import MABuilder
 from marl.agents.opre.config import OPREConfig
-from marl.agents.opre.learning import OPRELearner, PopArtOPRELearner
+from marl.agents.opre.learning import (
+    OPRELearner,
+    OPRELearnerME,
+    PopArtOPRELearner,
+    PopArtOPRELearnerME,
+)
 from marl.modules import popart_simple
 
 
@@ -53,7 +58,8 @@ class OPREBuilder(MABuilder):
         ),
     )
 
-    return OPRELearner(
+    learner = OPRELearnerME if self._config.memory_efficient else OPRELearner
+    return learner(
         network=networks,
         iterator=dataset,
         optimizer=optimizer,
@@ -124,7 +130,8 @@ class PopArtOPREBuilder(MABuilder):
           axis_name=axis)
       return types.PopArtLayer(init_fn=init_fn, update_fn=update_fn)
 
-    return PopArtOPRELearner(
+    learner = PopArtOPRELearnerME if self._config.memory_efficient else PopArtOPRELearner
+    return learner(
         network=networks,
         popart=(_art if self._config.only_art else _popart,
                 self._config.only_art),
