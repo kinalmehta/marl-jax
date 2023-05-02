@@ -1,12 +1,10 @@
 """Multi-agent evaluator implementation."""
 
-from typing import List
-
+from acme import core
+from acme.jax import variable_utils
 import dm_env
 import haiku as hk
 import jax
-from acme import core
-from acme.jax import variable_utils
 
 from marl.utils import experiment_utils as ma_utils
 
@@ -14,7 +12,7 @@ from marl.utils import experiment_utils as ma_utils
 class MAEvaluator(core.Actor):
   """A recurrent multi-agent Evaluator."""
 
-  _states: List[hk.LSTMState]
+  _states: list[hk.LSTMState]
 
   def __init__(
       self,
@@ -32,7 +30,7 @@ class MAEvaluator(core.Actor):
     self._rng = rng
     self._variable_client = variable_client
 
-    def initialize_states(rng_sequence: hk.PRNGSequence,) -> List[hk.LSTMState]:
+    def initialize_states(rng_sequence: hk.PRNGSequence,) -> list[hk.LSTMState]:
       """Initialize the recurrent states of the actor."""
       states = list()
       for _ in range(self.n_agents):

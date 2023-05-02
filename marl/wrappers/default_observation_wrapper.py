@@ -11,8 +11,8 @@ from collections.abc import Mapping
 from typing import Any, Optional
 
 import dm_env
-import numpy as np
 from meltingpot.python.utils.substrates import substrate
+import numpy as np
 
 
 def _setdefault(dictionary: Mapping[str, Any], key: str,

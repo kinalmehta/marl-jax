@@ -1,12 +1,17 @@
 """Default logger."""
 
+from collections.abc import Mapping
 import logging
 import os
-from typing import Any, Callable, Mapping, Optional
+from typing import Any, Callable, Optional
 
 from acme.utils.loggers import aggregators
 from acme.utils.loggers import asynchronous as async_logger
-from acme.utils.loggers import base, csv, filters, terminal, tf_summary
+from acme.utils.loggers import base
+from acme.utils.loggers import csv
+from acme.utils.loggers import filters
+from acme.utils.loggers import terminal
+from acme.utils.loggers import tf_summary
 
 from marl.utils.loggers.ma_filter import MAFilter
 

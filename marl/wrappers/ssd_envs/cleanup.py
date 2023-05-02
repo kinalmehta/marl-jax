@@ -1,5 +1,5 @@
-import numpy as np
 from gym.spaces import Discrete
+import numpy as np
 from numpy.random import rand
 
 from marl.wrappers.ssd_envs.agent import CleanupAgent

@@ -5,17 +5,19 @@ with some modifications to work with MARL setup.
 """
 """Runner used for executing local MARL agent."""
 
+from collections.abc import Sequence
 import sys
 import time
-from typing import Sequence, Tuple
 
 import acme
+from acme import core
+from acme import types
+from acme.jax import savers
+from acme.jax import utils
+from acme.utils import counting
 import dm_env
 import jax
 import reverb
-from acme import core, types
-from acme.jax import savers, utils
-from acme.utils import counting
 
 from marl import specs as ma_specs
 from marl.experiments import config as ma_config
@@ -244,7 +246,7 @@ class _LearningActor(core.Actor):
 
 def _disable_insert_blocking(
     tables: Sequence[reverb.Table],
-) -> Tuple[Sequence[reverb.Table], Sequence[int]]:
+) -> tuple[Sequence[reverb.Table], Sequence[int]]:
   """Disables blocking of insert operations for a given collection of tables."""
   modified_tables = []
   sample_sizes = []

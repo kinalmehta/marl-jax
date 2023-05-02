@@ -5,17 +5,15 @@ with some modifications to work with MARL setup.
 """
 """Runner used for executing local MARL agent."""
 
-from typing import List
-
 import acme
-import dm_env
-import haiku as hk
-import jax
-import jax.numpy as jnp
 from acme import core
 from acme.jax import variable_utils
 from acme.tf import savers as tf_savers
 from acme.utils import counting
+import dm_env
+import haiku as hk
+import jax
+import jax.numpy as jnp
 
 from marl import specs as ma_specs
 from marl.experiments import config as ma_config
@@ -131,7 +129,7 @@ class Evaluate(core.Actor):
     self._rng = rng
     self._variable_client = variable_client
 
-    def initialize_states(rng_sequence: hk.PRNGSequence,) -> List[hk.LSTMState]:
+    def initialize_states(rng_sequence: hk.PRNGSequence,) -> list[hk.LSTMState]:
       """Initialize the recurrent states of the actor."""
       states = list()
       for _ in range(self.n_agents):

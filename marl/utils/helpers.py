@@ -8,24 +8,23 @@ import datetime
 import functools
 from functools import partial
 
+from acme.wrappers import SinglePrecisionWrapper
 import cv2
 import dm_env
 import dmlab2d
+from meltingpot.python import scenario
+from meltingpot.python import substrate
 import numpy as np
-from acme.wrappers import SinglePrecisionWrapper
-from meltingpot.python import scenario, substrate
 
-from marl.wrappers import (
-    AutoResetWrapper,
-    HierarchyVecWrapper,
-    MeltingPotWrapper,
-    MergeWrapper,
-    ObservationActionRewardWrapper,
-    OverCooked,
-    SSDWrapper,
-    all_observations_wrapper,
-    default_observation_wrapper,
-)
+from marl.wrappers import all_observations_wrapper
+from marl.wrappers import AutoResetWrapper
+from marl.wrappers import default_observation_wrapper
+from marl.wrappers import HierarchyVecWrapper
+from marl.wrappers import MeltingPotWrapper
+from marl.wrappers import MergeWrapper
+from marl.wrappers import ObservationActionRewardWrapper
+from marl.wrappers import OverCooked
+from marl.wrappers import SSDWrapper
 from marl.wrappers.ssd_envs.env_creator import get_env_creator
 
 

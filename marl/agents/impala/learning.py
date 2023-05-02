@@ -1,22 +1,24 @@
 """Learner for the MAIMPALA actor-critic agent."""
 
+from collections.abc import Iterator
+from collections.abc import Sequence
 import functools
-from typing import Iterator, Optional, Sequence
+from typing import Optional
 
+from acme.jax import networks as networks_lib
+from acme.utils import counting
+from acme.utils import loggers
 import jax
 import numpy as np
 import optax
 import reverb
-from acme.jax import networks as networks_lib
-from acme.utils import counting, loggers
 
 from marl import types
-from marl.agents import learning, learning_memory_efficient
-from marl.agents.impala.loss import (
-    batched_art_impala_loss,
-    batched_popart_impala_loss,
-    impala_loss,
-)
+from marl.agents import learning
+from marl.agents import learning_memory_efficient
+from marl.agents.impala.loss import batched_art_impala_loss
+from marl.agents.impala.loss import batched_popart_impala_loss
+from marl.agents.impala.loss import impala_loss
 
 _PMAP_AXIS_NAME = "data"
 

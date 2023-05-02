@@ -1,18 +1,21 @@
 """Multi agent learner implementation."""
 
+from collections.abc import Iterator
+from collections.abc import Sequence
 import time
-from typing import Callable, Dict, Iterator, List, Optional, Sequence, Tuple
+from typing import Callable, Optional
 
+from absl import logging
 import acme
+from acme.jax import networks as networks_lib
+from acme.jax import utils as acme_utils
+from acme.utils import counting
+from acme.utils import loggers
 import haiku as hk
 import jax
 import jax.numpy as jnp
 import optax
 import reverb
-from absl import logging
-from acme.jax import networks as networks_lib
-from acme.jax import utils as acme_utils
-from acme.utils import counting, loggers
 
 from marl import types
 from marl.utils import experiment_utils as ma_utils
@@ -74,7 +77,7 @@ class MALearner(acme.Learner):
       )
 
     # Initialize Params for Each Network
-    def make_initial_states(key: jnp.ndarray) -> List[types.TrainingState]:
+    def make_initial_states(key: jnp.ndarray) -> list[types.TrainingState]:
       states = list()
       for _ in range(self.n_agents):
         agent_state, key = make_initial_state(key)
@@ -84,7 +87,7 @@ class MALearner(acme.Learner):
     @jax.jit
     def sgd_step(
         state: types.TrainingState, sample: types.TrainingData
-    ) -> Tuple[types.TrainingState, Dict[str, jnp.ndarray]]:
+    ) -> tuple[types.TrainingState, dict[str, jnp.ndarray]]:
       """Computes an SGD step, returning new state and metrics for logging."""
 
       # Compute gradients.
@@ -135,7 +138,7 @@ class MALearner(acme.Learner):
 
   def _get_initial_lstm_states(self):
 
-    def initialize_states(rng_sequence: hk.PRNGSequence,) -> List[hk.LSTMState]:
+    def initialize_states(rng_sequence: hk.PRNGSequence,) -> list[hk.LSTMState]:
       """Initialize the recurrent states of the actor."""
       states = list()
       for _ in range(self.n_agents):
@@ -195,7 +198,7 @@ class MALearner(acme.Learner):
     # Maybe write logs.
     self._logger.write({**results, **counts})
 
-  def get_variables(self, names: Sequence[str]) -> List[networks_lib.Params]:
+  def get_variables(self, names: Sequence[str]) -> list[networks_lib.Params]:
     # Return first replica of parameters.
     # return [self._combined_states.params]
     return acme_utils.get_from_first_device([self._combined_states.params],
@@ -269,7 +272,7 @@ class MALearnerPopArt(MALearner):
 
     # Initialize Params for Each Network
     def make_initial_states(
-        key: jnp.ndarray) -> List[types.PopArtTrainingState]:
+        key: jnp.ndarray) -> list[types.PopArtTrainingState]:
       states = list()
       for _ in range(self.n_agents):
         agent_state, key = make_initial_state(key)
@@ -279,7 +282,7 @@ class MALearnerPopArt(MALearner):
     @jax.jit
     def sgd_step(
         state: types.PopArtTrainingState, sample: types.TrainingData
-    ) -> Tuple[types.PopArtTrainingState, Dict[str, jnp.ndarray]]:
+    ) -> tuple[types.PopArtTrainingState, dict[str, jnp.ndarray]]:
       """Computes an SGD step, returning new state and metrics for logging."""
 
       # Compute gradients.

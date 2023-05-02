@@ -1,11 +1,14 @@
 # Modified from https://github.com/deepmind/meltingpot/blob/main/meltingpot/python/utils/scenarios/wrappers/all_observations_wrapper.py
 
-from typing import Any, Collection, Mapping, Sequence, Union
+from collections.abc import Collection
+from collections.abc import Mapping
+from collections.abc import Sequence
+from typing import Any, Union
 
-import dm_env
-import numpy as np
 from acme.wrappers import base as acme_base
+import dm_env
 from meltingpot.python.utils.substrates import substrate
+import numpy as np
 
 GLOBAL_KEY = 'global'
 OBSERVATIONS_KEY = 'observation'

@@ -2,13 +2,14 @@
 
 import datetime
 import os
-from typing import Any, List
+from typing import Any
 
+from acme import specs
+from acme import types
 import cv2
 import dm_env
-import numpy as np
-from acme import specs, types
 from natsort import natsorted
+import numpy as np
 
 from marl.wrappers.ssd_envs.map_env import MapEnv
 
@@ -60,7 +61,7 @@ class SSDWrapper(dm_env.Environment):
                                  (frame.shape[1], frame.shape[0]))
     self.cap.write(frame)
 
-  def _get_observation(self, orig_observation) -> List[types.NestedArray]:
+  def _get_observation(self, orig_observation) -> list[types.NestedArray]:
     # observation = self.env.lossless_state_encoding_mdp(self.env.state)
     return [{
         "agent_obs":
@@ -119,7 +120,7 @@ class SSDWrapper(dm_env.Environment):
     done = not self.agents or self._env_done
     return done
 
-  def observation_spec(self) -> List[specs.Array]:
+  def observation_spec(self) -> list[specs.Array]:
     obs_spec = [{
         "agent_obs":
             specs.Array(
@@ -129,20 +130,20 @@ class SSDWrapper(dm_env.Environment):
     }] * self.num_agents
     return obs_spec
 
-  def action_spec(self) -> List[specs.DiscreteArray]:
+  def action_spec(self) -> list[specs.DiscreteArray]:
     act_spec = [specs.DiscreteArray(self.num_actions, name='action')
                ] * self.num_agents
     return act_spec
 
-  def reward_spec(self) -> List[specs.Array]:
+  def reward_spec(self) -> list[specs.Array]:
     reward_spec = [specs.Array(shape=(), dtype=np.float32, name='reward')
                   ] * self.num_agents
     return reward_spec
 
-  def discount_spec(self) -> List[specs.Array]:
+  def discount_spec(self) -> list[specs.Array]:
     disc_spec = [specs.Array(shape=(), dtype=np.float32, name='discount')
                 ] * self.num_agents
     return disc_spec
 
-  def extras_spec(self) -> List[Any]:
+  def extras_spec(self) -> list[Any]:
     return list()

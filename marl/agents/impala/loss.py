@@ -6,12 +6,12 @@ Adapted from https://github.com/deepmind/acme/blob/master/acme/jax/losses/impala
 
 from typing import Callable
 
+from acme.jax import utils
 import haiku as hk
 import jax
 import jax.numpy as jnp
 import numpy as np
 import rlax
-from acme.jax import utils
 
 from marl import types
 

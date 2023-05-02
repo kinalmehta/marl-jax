@@ -12,14 +12,15 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 
 import functools
 
-from absl import app, flags
+from absl import app
+from absl import flags
 from meltingpot.python import scenario
 
-import train
 from marl import experiments
 from marl.experiments import config as ma_config
 from marl.utils import helpers
 from marl.utils.experiment_utils import make_experiment_logger
+import train
 
 FLAGS = flags.FLAGS
 

@@ -1,10 +1,11 @@
+from acme.jax import utils
+from acme.specs import EnvironmentSpec
 import haiku as hk
 import jax
 import jax.numpy as jnp
-from acme.jax import utils
-from acme.specs import EnvironmentSpec
 
-from marl.agents.networks import make_haiku_networks, make_haiku_networks_2
+from marl.agents.networks import make_haiku_networks
+from marl.agents.networks import make_haiku_networks_2
 
 # Useful type aliases
 Images = jnp.ndarray

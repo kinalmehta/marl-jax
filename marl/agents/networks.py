@@ -1,11 +1,11 @@
 from typing import Any
 
-import haiku as hk
-import jax
-import jax.numpy as jnp
 from acme.jax import networks as networks_lib
 from acme.jax import utils
 from acme.specs import EnvironmentSpec
+import haiku as hk
+import jax
+import jax.numpy as jnp
 
 from marl import types
 

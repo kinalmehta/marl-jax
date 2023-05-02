@@ -1,9 +1,10 @@
 """Base map class that defines the rendering process
 """
 
+from gym.spaces import Box
+from gym.spaces import Dict
 import matplotlib.pyplot as plt
 import numpy as np
-from gym.spaces import Box, Dict
 
 _MAP_ENV_ACTIONS = {
     "MOVE_LEFT": [0, -1],  # Move left

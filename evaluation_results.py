@@ -1,8 +1,10 @@
 import os
 
+from absl import app
+from absl import flags
+from absl import logging
 import numpy as np
 import pandas as pd
-from absl import app, flags, logging
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('results_dir', "./results/",

@@ -1,20 +1,20 @@
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.37.3
+    rev: v3.3.1
     hooks:
       - id: pyupgrade
         args: 
-          - --py37-plus
+          - --py39-plus
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
       - id: isort
         args:
-          - --profile=black
+          - --profile=google
           - --skip-glob=wandb/**/*
           - --thirdparty=wandb
   - repo: https://github.com/myint/autoflake
-    rev: v1.4
+    rev: v2.0.2
     hooks:
       - id: autoflake
         args:
@@ -33,15 +33,15 @@ repos:
           - --recursive
           - --exclude=wandb, __init__.py
   # - repo: https://github.com/python/black
-  #   rev: 22.3.0
+  #   rev: 23.1.0
   #   hooks:
   #     - id: black
   #       args:
-  #         - --line-length=80
-  #         - --exclude=wandb
+  #         - --line-length=120
+  #         - --exclude=wandb, __init__.py
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.0
+    rev: v2.2.4
     hooks:
       - id: codespell
         args:
-          - -L=ot
+          - -L=complies

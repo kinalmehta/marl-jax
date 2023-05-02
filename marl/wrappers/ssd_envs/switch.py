@@ -1,7 +1,7 @@
 import math
 
-import numpy as np
 from gym.spaces import Discrete
+import numpy as np
 
 from marl.wrappers.ssd_envs.agent import SwitchAgent
 from marl.wrappers.ssd_envs.map_env import MapEnv

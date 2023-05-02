@@ -1,15 +1,20 @@
 """MARL Acme experiment config."""
 
+from collections.abc import Sequence
 import dataclasses
-from typing import Optional, Sequence
+from typing import Optional
 
-import jax
-from acme import core, environment_loop, specs
+from acme import core
+from acme import environment_loop
+from acme import specs
 from acme.agents.jax import builders
-from acme.jax import types, utils
+from acme.jax import types
+from acme.jax import utils
 from acme.jax.experiments import config
-from acme.utils import counting, loggers
+from acme.utils import counting
+from acme.utils import loggers
 from acme.utils import observers as observers_lib
+import jax
 
 from marl import specs as ma_specs
 from marl.utils import experiment_utils

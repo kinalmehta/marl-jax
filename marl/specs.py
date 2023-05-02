@@ -1,7 +1,7 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 
-import dm_env
 from acme.specs import EnvironmentSpec
+import dm_env
 from natsort import natsorted
 
 
@@ -10,8 +10,8 @@ class MAEnvironmentSpec:
   def __init__(
       self,
       environment: dm_env.Environment,
-      agent_environment_specs: List[EnvironmentSpec] = None,
-      extras_specs: Dict[str, Any] = None,
+      agent_environment_specs: list[EnvironmentSpec] = None,
+      extras_specs: dict[str, Any] = None,
   ):
     """Multi-agent environment spec
 
@@ -56,7 +56,7 @@ class MAEnvironmentSpec:
         discounts=environment.discount_spec(),
     )
 
-  def get_extras_specs(self) -> List[Dict[str, Any]]:
+  def get_extras_specs(self) -> list[dict[str, Any]]:
     """Get extras specs
         Returns:
             Extras spec that contains any additional information not contained
@@ -71,14 +71,14 @@ class MAEnvironmentSpec:
         """
     return self._agent_environment_specs
 
-  def set_extras_specs(self, extras_specs: List[Dict[str, Any]]) -> None:
+  def set_extras_specs(self, extras_specs: list[dict[str, Any]]) -> None:
     """Set extras specs
         Returns:
             None
         """
     self._extras_specs = extras_specs
 
-  def get_agent_ids(self) -> List[Union[int, str]]:
+  def get_agent_ids(self) -> list[Union[int, str]]:
     return self._keys
 
   def get_single_agent_environment_specs(self) -> EnvironmentSpec:

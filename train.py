@@ -10,14 +10,18 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 import datetime
 import functools
 
+from absl import app
+from absl import flags
 import jax
 import launchpad as lp
-from absl import app, flags
 
 from marl import experiments
 from marl import specs as ma_specs
-from marl.agents import impala, opre
-from marl.agents.networks import ArrayFE, ImageFE, MeltingpotFE
+from marl.agents import impala
+from marl.agents import opre
+from marl.agents.networks import ArrayFE
+from marl.agents.networks import ImageFE
+from marl.agents.networks import MeltingpotFE
 from marl.experiments import config as ma_config
 from marl.utils import helpers
 from marl.utils import lp_utils as ma_lp_utils

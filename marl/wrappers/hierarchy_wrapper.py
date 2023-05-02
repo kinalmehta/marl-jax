@@ -1,9 +1,10 @@
 """A wrapper that adds diversity vector into the observation for a multi-agent environment."""
 
+from acme import specs
+from acme import types
+from acme.wrappers import base
 import dm_env
 import numpy as np
-from acme import specs, types
-from acme.wrappers import base
 
 
 class HierarchyVecWrapper(base.EnvironmentWrapper):

@@ -1,10 +1,11 @@
 """A wrapper that merges the data of all agents in the leading dimension for a multi-agent environment."""
 
+from acme import specs
+from acme import types
+from acme.wrappers import base
 import dm_env
 import numpy as np
 import tree
-from acme import specs, types
-from acme.wrappers import base
 
 
 class MergeWrapper(base.EnvironmentWrapper):

@@ -1,30 +1,30 @@
 import dataclasses
-from typing import Callable, Dict, Generic, List, NamedTuple, Tuple, Union
+from typing import Callable, Generic, NamedTuple, Union
 
-import jax.numpy as jnp
-import numpy as np
-import optax
 from acme import types
 from acme.agents.jax.actor_core import RecurrentState
 from acme.jax import networks
 from acme.jax import networks as networks_lib
 from acme.jax import types as jax_types
+import jax.numpy as jnp
+import numpy as np
+import optax
 from rlax import PopArtState
 
 SingleAgentAction = Union[int, float, np.ndarray]
-Action = Union[SingleAgentAction, Dict[str, SingleAgentAction]]
-Actions = List[Action]
+Action = Union[SingleAgentAction, dict[str, SingleAgentAction]]
+Actions = list[Action]
 
 SingleAgentReward = Union[int, float]
-Reward = Union[SingleAgentReward, Dict[str, SingleAgentReward]]
+Reward = Union[SingleAgentReward, dict[str, SingleAgentReward]]
 Discount = Reward
 
 # Only simple observations & discrete action spaces for now.
-Observation = Union[jnp.ndarray, Dict[str, np.ndarray]]
-Observations = List[Observation]
+Observation = Union[jnp.ndarray, dict[str, np.ndarray]]
+Observations = list[Observation]
 Action = int
-Actions = List[Action]
-Outputs = Tuple[Tuple[networks.Logits, networks.Value], RecurrentState]
+Actions = list[Action]
+Outputs = tuple[tuple[networks.Logits, networks.Value], RecurrentState]
 PolicyValueInitFn = Callable[[networks.PRNGKey, RecurrentState],
                              networks.Params]
 PolicyValueFn = Callable[[networks.Params, Observation, RecurrentState],

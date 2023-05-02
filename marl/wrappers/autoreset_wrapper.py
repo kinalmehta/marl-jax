@@ -1,8 +1,8 @@
 """A wrapper that adds diversity vector into the observation for a multi-agent environment."""
 
-import dm_env
 from acme import types
 from acme.wrappers import base
+import dm_env
 
 
 class AutoResetWrapper(base.EnvironmentWrapper):

@@ -1,8 +1,7 @@
-from typing import Tuple
-
 import chex
 import jax.numpy as jnp
-from rlax import PopArtState, art
+from rlax import art
+from rlax import PopArtState
 
 Array = chex.Array
 
@@ -34,7 +33,7 @@ def popart_simple(num_outputs: int,
         jnp.ones([num_outputs]))
 
   def art_update(state: PopArtState, targets: Array,
-                 indices: Array) -> Tuple[PopArtState]:
+                 indices: Array) -> tuple[PopArtState]:
     """Computes the PopArt update.
 
     Args:

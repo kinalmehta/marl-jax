@@ -1,9 +1,9 @@
 """A wrapper that puts the previous action and reward into the observation for a multi-agent environment."""
 
-import dm_env
-import tree
 from acme import types
 from acme.wrappers import base
+import dm_env
+import tree
 
 
 class ObservationActionRewardWrapper(base.EnvironmentWrapper):

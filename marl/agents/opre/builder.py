@@ -1,25 +1,25 @@
 """OPRE Builder."""
 
-from typing import Any, Callable, Iterator, Optional
+from collections.abc import Iterator
+from typing import Any, Callable, Optional
 
+from acme import core
+from acme.jax import networks as networks_lib
+from acme.utils import counting
+from acme.utils import loggers
 import haiku as hk
 import optax
 import reverb
 import rlax
-from acme import core
-from acme.jax import networks as networks_lib
-from acme.utils import counting, loggers
 
 from marl import specs as ma_specs
 from marl import types
 from marl.agents.builder import MABuilder
 from marl.agents.opre.config import OPREConfig
-from marl.agents.opre.learning import (
-    OPRELearner,
-    OPRELearnerME,
-    PopArtOPRELearner,
-    PopArtOPRELearnerME,
-)
+from marl.agents.opre.learning import OPRELearner
+from marl.agents.opre.learning import OPRELearnerME
+from marl.agents.opre.learning import PopArtOPRELearner
+from marl.agents.opre.learning import PopArtOPRELearnerME
 from marl.modules import popart_simple
 
 

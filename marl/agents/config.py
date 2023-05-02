@@ -3,10 +3,10 @@
 import dataclasses
 from typing import Optional, Union
 
-import numpy as np
-import optax
 from acme import types
 from acme.adders import reverb as adders_reverb
+import numpy as np
+import optax
 
 
 @dataclasses.dataclass

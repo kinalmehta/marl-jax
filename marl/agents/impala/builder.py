@@ -1,25 +1,25 @@
 """IMPALA Builder."""
 
-from typing import Any, Callable, Iterator, Optional
+from collections.abc import Iterator
+from typing import Any, Callable, Optional
 
+from acme import core
+from acme.jax import networks as networks_lib
+from acme.utils import counting
+from acme.utils import loggers
 import haiku as hk
 import optax
 import reverb
 import rlax
-from acme import core
-from acme.jax import networks as networks_lib
-from acme.utils import counting, loggers
 
 from marl import specs as ma_specs
 from marl import types
 from marl.agents.builder import MABuilder
 from marl.agents.impala.config import IMPALAConfig
-from marl.agents.impala.learning import (
-    IMPALALearner,
-    IMPALALearnerME,
-    PopArtIMPALALearner,
-    PopArtIMPALALearnerME,
-)
+from marl.agents.impala.learning import IMPALALearner
+from marl.agents.impala.learning import IMPALALearnerME
+from marl.agents.impala.learning import PopArtIMPALALearner
+from marl.agents.impala.learning import PopArtIMPALALearnerME
 from marl.modules import popart_simple
 
 

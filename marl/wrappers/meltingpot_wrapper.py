@@ -1,13 +1,14 @@
 """Wraps an Melting Pot RL environment to be used as a dm_env environment."""
 
-from typing import List, Union
+from typing import Union
 
+from acme import specs
+from acme import types
 import dm_env
 import dmlab2d
-import numpy as np
-from acme import specs, types
 from meltingpot.python.utils.scenarios.scenario import Scenario
 from meltingpot.python.utils.substrates.substrate import Substrate
+import numpy as np
 
 from marl import types as marl_types
 
@@ -83,19 +84,19 @@ class MeltingPotWrapper(dmlab2d.Environment):
     done = not self.agents or self._env_done
     return done
 
-  def observation_spec(self) -> List[marl_types.Observation]:
+  def observation_spec(self) -> list[marl_types.Observation]:
     return self.obs_spec
 
-  def action_spec(self,) -> List[specs.DiscreteArray]:
+  def action_spec(self,) -> list[specs.DiscreteArray]:
     return self._environment.action_spec()
 
-  def reward_spec(self) -> List[specs.Array]:
+  def reward_spec(self) -> list[specs.Array]:
     return self._environment.reward_spec()
 
-  def discount_spec(self) -> List[specs.BoundedArray]:
+  def discount_spec(self) -> list[specs.BoundedArray]:
     return [self._environment.discount_spec()] * self.num_agents
 
-  def extras_spec(self) -> List[specs.BoundedArray]:
+  def extras_spec(self) -> list[specs.BoundedArray]:
     """Extra data spec.
         Returns:
             List[specs.BoundedArray]: spec for extra data.

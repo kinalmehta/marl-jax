@@ -1,18 +1,20 @@
 """Multi agent learner implementation."""
 
+from collections.abc import Iterator
+from collections.abc import Sequence
 import time
-from collections.abc import Iterator, Sequence
 from typing import Callable, Optional
 
+from absl import logging
 import acme
+from acme.jax import networks as networks_lib
+from acme.utils import counting
+from acme.utils import loggers
 import haiku as hk
 import jax
 import jax.numpy as jnp
 import optax
 import reverb
-from absl import logging
-from acme.jax import networks as networks_lib
-from acme.utils import counting, loggers
 
 from marl import types
 from marl.utils import experiment_utils as ma_utils

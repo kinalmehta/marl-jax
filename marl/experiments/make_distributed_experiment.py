@@ -8,17 +8,21 @@ with some modifications to work with MARL setup.
 import itertools
 from typing import Callable, Optional
 
+from acme import core
+from acme import environment_loop
+from acme.agents.jax import builders
+from acme.jax import networks as networks_lib
+from acme.jax import savers
+from acme.jax import snapshotter
+from acme.jax import utils
+from acme.jax.experiments import config
+from acme.tf import savers as tf_savers
+from acme.utils import counting
+from acme.utils import lp_utils
 import dm_env
 import jax
 import launchpad as lp
 import reverb
-from acme import core, environment_loop
-from acme.agents.jax import builders
-from acme.jax import networks as networks_lib
-from acme.jax import savers, snapshotter, utils
-from acme.jax.experiments import config
-from acme.tf import savers as tf_savers
-from acme.utils import counting, lp_utils
 
 from marl import specs as ma_specs
 from marl.experiments import config as ma_config

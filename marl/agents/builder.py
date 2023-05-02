@@ -1,18 +1,21 @@
 """Multi-agent Builder."""
 
-from typing import Any, Callable, Iterator, List, Optional
+from collections.abc import Iterator
+from typing import Any, Callable, Optional
 
 import acme
-import haiku as hk
-import jax
-import jax.numpy as jnp
-import reverb
-from acme import adders, core
+from acme import adders
+from acme import core
 from acme.adders import reverb as reverb_adders
 from acme.agents.jax import builders
 from acme.datasets import reverb as datasets
 from acme.jax import networks as networks_lib
-from acme.jax import utils, variable_utils
+from acme.jax import utils
+from acme.jax import variable_utils
+import haiku as hk
+import jax
+import jax.numpy as jnp
+import reverb
 
 from marl import specs as ma_specs
 from marl import types
@@ -47,7 +50,7 @@ class MABuilder(builders.ActorLearnerBuilder[types.RecurrentNetworks,
       self,
       environment_spec: ma_specs.MAEnvironmentSpec,
       policy: types.RecurrentNetworks,
-  ) -> List[reverb.Table]:
+  ) -> list[reverb.Table]:
     """The queue; use XData or INFO log."""
     del policy
     env_specs = environment_spec.get_agent_environment_specs()

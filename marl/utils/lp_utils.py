@@ -1,13 +1,11 @@
-from typing import Dict, List
-
 from absl import flags
 from launchpad.nodes.python.local_multi_processing import PythonProcess
 
 FLAGS = flags.FLAGS
 
 
-def to_device(program_nodes: List,
-              nodes_on_gpu: dict = {"learner": [0]}) -> Dict:
+def to_device(program_nodes: list,
+              nodes_on_gpu: dict = {"learner": [0]}) -> dict:
   """Specifies which nodes should run on gpu.
 
     If nodes_on_gpu is an empty list, this returns a cpu only config.

@@ -2,11 +2,13 @@
 
 import unittest
 
+from absl.testing import absltest
+from absl.testing import parameterized
+from acme import types
+from acme import wrappers
+from acme.jax import utils
 import dm_env
 import tree
-from absl.testing import absltest, parameterized
-from acme import types, wrappers
-from acme.jax import utils
 
 SKIP_MELTINGPOT_TESTS = False
 SKIP_MELTINGPOT_MESSAGE = "meltingpot not installed"
@@ -17,7 +19,8 @@ import sys
 cwd = os.getcwd()
 sys.path.append(cwd)
 
-from meltingpot.python import scenario, substrate
+from meltingpot.python import scenario
+from meltingpot.python import substrate
 from ml_collections import config_dict
 
 from marl.wrappers import meltingpot_wrapper

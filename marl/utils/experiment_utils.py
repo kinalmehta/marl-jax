@@ -1,10 +1,11 @@
 """Utility definitions for MARL experiments."""
 
-from typing import Any, Mapping, Optional, Union
+from collections.abc import Mapping
+from typing import Any, Optional, Union
 
+from acme.utils import loggers
 import jax
 import jax.numpy as jnp
-from acme.utils import loggers
 
 from marl.utils import loggers as marl_loggers
 

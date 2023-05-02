@@ -1,13 +1,14 @@
 """Multi-agent actor implementation."""
 
-from typing import List, Optional
+from typing import Optional
 
+from acme import adders
+from acme import core
+from acme.jax import variable_utils
 import dm_env
 import haiku as hk
 import jax
 import jax.numpy as jnp
-from acme import adders, core
-from acme.jax import variable_utils
 
 from marl import types
 from marl.utils import experiment_utils as ma_utils
@@ -16,9 +17,9 @@ from marl.utils import experiment_utils as ma_utils
 class MAActor(core.Actor):
   """A recurrent multi-agent actor."""
 
-  _states: List[hk.LSTMState]
-  _prev_states: List[hk.LSTMState]
-  _prev_logits: List[jnp.ndarray]
+  _states: list[hk.LSTMState]
+  _prev_states: list[hk.LSTMState]
+  _prev_logits: list[jnp.ndarray]
 
   def __init__(
       self,
@@ -38,7 +39,7 @@ class MAActor(core.Actor):
     self._rng = rng
     self.n_agents = n_agents
 
-    def initialize_states(rng_sequence: hk.PRNGSequence,) -> List[hk.LSTMState]:
+    def initialize_states(rng_sequence: hk.PRNGSequence,) -> list[hk.LSTMState]:
       """Initialize the recurrent states of the actor."""
       states = list()
       for _ in range(self.n_agents):
