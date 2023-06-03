@@ -6,6 +6,7 @@ with some modifications to work with MARL setup.
 """Program definition for a distributed layout of MARL agent based on a builder."""
 
 import itertools
+import math
 from typing import Callable, Optional
 
 from acme import core
@@ -15,6 +16,7 @@ from acme.jax import networks as networks_lib
 from acme.jax import savers
 from acme.jax import snapshotter
 from acme.jax import utils
+from acme.jax import variable_utils
 from acme.jax.experiments import config
 from acme.tf import savers as tf_savers
 from acme.utils import counting
@@ -25,25 +27,30 @@ import launchpad as lp
 import reverb
 
 from marl import specs as ma_specs
+from marl import types
 from marl.experiments import config as ma_config
+from marl.experiments import inference_server
 
 ActorId = int
+InferenceServer = inference_server.InferenceServer[types.PolicyValueFn]
 
 
 def make_distributed_experiment(
     experiment: ma_config.MAExperimentConfig,
     num_actors: int,
-    gpu_actors: list = [],
     *,
+    inference_server_config: Optional[
+        inference_server.InferenceServerConfig] = None,
     num_learner_nodes: int = 1,
     num_actors_per_node: int = 1,
+    num_inference_servers: int = 1,
     multithreading_colocate_learner_and_reverb: bool = False,
     checkpointing_config: Optional[ma_config.CheckpointingConfig] = None,
     make_snapshot_models: Optional[config.SnapshotModelFactory[
         builders.Networks]] = None,
     name="agent",
     program: Optional[lp.Program] = None,
-):
+) -> lp.Program:
   """Builds distributed agent based on a builder."""
 
   if multithreading_colocate_learner_and_reverb and num_learner_nodes > 1:
@@ -166,17 +173,46 @@ def make_distributed_experiment(
 
     return learner
 
+  def build_inference_server(
+      inference_server_config: inference_server.InferenceServerConfig,
+      variable_source: core.VariableSource,
+  ) -> InferenceServer:
+    """Builds an inference server for `ActorCore` policies."""
+    dummy_seed = 1.0
+
+    # Create environment and policy core.
+    environment = experiment.environment_factory(dummy_seed)
+    environment_spec = ma_specs.MAEnvironmentSpec(environment)
+
+    networks = experiment.network_factory(
+        environment_spec.get_single_agent_environment_specs())
+
+    return InferenceServer(
+        handler=jax.jit(
+            jax.vmap(
+                jax.vmap(networks.forward_fn),
+                in_axes=(None, 0, 0),
+                # Note on in_axes: Params will not be batched. Only the
+                # observations and actor state will be stacked along a new
+                # leading axis by the inference server.
+            )),
+        variable_source=variable_source,
+        devices=jax.local_devices(),
+        config=inference_server_config,
+    )
+
   def build_actor(
       random_key: networks_lib.PRNGKey,
       replay: reverb.Client,
       variable_source: core.VariableSource,
       counter: counting.Counter,
       actor_id: ActorId,
+      inference_server: Optional[InferenceServer],
   ) -> environment_loop.EnvironmentLoop:
     """The actor process."""
     environment_key, actor_key = jax.random.split(random_key)
-    # Create environment and policy core.
 
+    # Create environment and policy core.
     # Environments normally require uint32 as a seed.
     environment = experiment.environment_factory(
         utils.sample_uint32(environment_key))
@@ -184,13 +220,17 @@ def make_distributed_experiment(
 
     networks = experiment.network_factory(
         environment_spec.get_single_agent_environment_specs())
-    policy_network = experiment.builder.make_policy(
-        networks, environment_spec, evaluation=False)
-    adder = experiment.builder.make_adder(replay, environment_spec,
-                                          policy_network)
-    actor = experiment.builder.make_actor(actor_key, policy_network,
-                                          environment_spec, variable_source,
-                                          adder)
+
+    adder = experiment.builder.make_adder(replay, environment_spec, networks)
+
+    if inference_server is not None:
+      networks.forward_fn = inference_server.handler
+      variable_source = variable_utils.ReferenceVariableSource()
+    else:
+      networks.forward_fn = jax.vmap(networks.forward_fn)
+
+    actor = experiment.builder.make_actor(actor_key, networks, environment_spec,
+                                          variable_source, adder)
 
     # Create logger and counter.
     counter = counting.Counter(counter, "actor")
@@ -293,25 +333,33 @@ def make_distributed_experiment(
         # NOTE: Do not pass the counter to the secondary learners to avoid
         # double counting of learner steps.
 
+  if inference_server_config is not None:
+    num_actors_per_server = math.ceil(num_actors / num_inference_servers)
+    with program.group("inference_server"):
+      inference_nodes = []
+      for _ in range(num_inference_servers):
+        inference_nodes.append(
+            program.add_node(
+                lp.CourierNode(
+                    build_inference_server,
+                    inference_server_config,
+                    learner,
+                    courier_kwargs={"thread_pool_size": num_actors_per_server},
+                )))
+  else:
+    num_inference_servers = 1
+    inference_nodes = [None]
+
   # Create all actor threads.
-  offset = len(gpu_actors)
   *actor_keys, key = jax.random.split(key, num_actors + 1)
   variable_sources = itertools.cycle(variable_sources)
-  if offset > 0:
-    # with program.group("gpu_actor"):
-    for aid, (akey,
-              vsource) in enumerate(zip(actor_keys[:offset], variable_sources)):
-      with program.group(gpu_actors[aid]):
-        program.add_node(
-            lp.CourierNode(build_actor, akey, replay, vsource, counter,
-                           aid + 1))
+  inference_nodes = itertools.cycle(inference_nodes)
 
   with program.group("actor"):
     actor_nodes = [
-        lp.CourierNode(build_actor, akey, replay, vsource, counter, aid)
-        for aid, (
-            akey,
-            vsource) in enumerate(zip(actor_keys[offset:], variable_sources))
+        lp.CourierNode(build_actor, akey, replay, vsource, counter, aid, inode)
+        for aid, (akey, vsource, inode) in enumerate(
+            zip(actor_keys, variable_sources, inference_nodes))
     ]
 
     # Create (maybe colocated) actor nodes.

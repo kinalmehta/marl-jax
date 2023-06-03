@@ -118,7 +118,8 @@ class PopArtOPREBuilder(MABuilder):
           step_size=self._config.step_size,
           scale_lb=self._config.scale_lb,
           scale_ub=self._config.scale_ub,
-          axis_name=axis)
+          axis_name=axis,
+      )
       return types.PopArtLayer(init_fn=init_fn, update_fn=update_fn)
 
     def _art(axis):
@@ -127,7 +128,8 @@ class PopArtOPREBuilder(MABuilder):
           step_size=self._config.step_size,
           scale_lb=self._config.scale_lb,
           scale_ub=self._config.scale_ub,
-          axis_name=axis)
+          axis_name=axis,
+      )
       return types.PopArtLayer(init_fn=init_fn, update_fn=update_fn)
 
     learner = PopArtOPRELearnerME if self._config.memory_efficient else PopArtOPRELearner

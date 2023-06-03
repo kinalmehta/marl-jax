@@ -39,6 +39,7 @@ def make_experiment_logger(
   )
 
 
+@jax.jit
 def transpose(data, axis=(0, 1)):
 
   def _transpose(x):
@@ -49,6 +50,7 @@ def transpose(data, axis=(0, 1)):
   return jax.tree_util.tree_map(_transpose, data)
 
 
+@jax.jit
 def concat_data(data, axis=0):
   """
     Concatenate data from multiple pmap processes into a single array.
@@ -56,6 +58,7 @@ def concat_data(data, axis=0):
   return jax.tree_util.tree_map(lambda *x: jnp.concatenate(x, axis=axis), *data)
 
 
+@jax.jit
 def merge_data(data, axis=0):
   """
     Merge data from multiple agents into a single array.
@@ -64,10 +67,12 @@ def merge_data(data, axis=0):
   return jax.tree_util.tree_map(lambda *x: jnp.stack(x, axis=axis), *data)
 
 
+@jax.jit
 def split_data(data):
   return jax.tree_util.tree_map(lambda x: list(x), data)
 
 
+@jax.jit
 def merge_dimensions(data, start=0, end=1):
 
   def merge_dims(x):
@@ -84,6 +89,7 @@ def slice_data(data, i: int, n_devices: int):
   return jax.tree_util.tree_map(lambda s: s[i:i + n_devices], data)
 
 
+@jax.jit
 def select_idx(data, i: Union[int, list]):
   """
     Select the i-th element of the array.

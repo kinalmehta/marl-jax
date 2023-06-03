@@ -15,6 +15,8 @@ import rlax
 
 from marl import types
 
+# from marl.modules.debug import db
+
 
 def batched_art_impala_loss(
     network: types.RecurrentNetworks,
@@ -144,11 +146,13 @@ def batched_art_impala_loss(
     # jax.debug.print("new errors: {} {}", jnp.max(new_vtrace_errors), jnp.min(new_vtrace_errors))
 
     # V-trace Advantage
-    q_bootstrap = jnp.concatenate([
-        new_vtrace_targets[:, 1:],
-        new_values[:, -1:],
-    ],
-                                  axis=1)
+    q_bootstrap = jnp.concatenate(
+        [
+            new_vtrace_targets[:, 1:],
+            new_values[:, -1:],
+        ],
+        axis=1,
+    )
     q_estimate = rewards[:, :-1] + discount_t * q_bootstrap
     q_estimate_norm = rlax.normalize(new_popart_state, q_estimate,
                                      indices[:, :-1])
@@ -172,7 +176,7 @@ def batched_art_impala_loss(
     # Combine weighted sum of actor & critic losses, averaged over the sequence
     critic_loss *= baseline_cost
     pi_entropy *= entropy_cost
-    mean_loss = (pg_loss + critic_loss + pi_entropy)  # []
+    mean_loss = pg_loss + critic_loss + pi_entropy  # []
 
     metrics = {
         "total_loss": mean_loss,
@@ -303,11 +307,13 @@ def batched_popart_impala_loss(
     # jax.debug.print("new errors: {} {}", jnp.max(new_vtrace_errors), jnp.min(new_vtrace_errors))
 
     # V-trace Advantage
-    q_bootstrap = jnp.concatenate([
-        new_vtrace_targets[:, 1:],
-        new_values[:, -1:],
-    ],
-                                  axis=1)
+    q_bootstrap = jnp.concatenate(
+        [
+            new_vtrace_targets[:, 1:],
+            new_values[:, -1:],
+        ],
+        axis=1,
+    )
     q_estimate = rewards[:, :-1] + discount_t * q_bootstrap
     q_estimate_norm = rlax.normalize(new_popart_state, q_estimate,
                                      indices[:, :-1])
@@ -332,7 +338,7 @@ def batched_popart_impala_loss(
     # Combine weighted sum of actor & critic losses, averaged over the sequence
     critic_loss *= baseline_cost
     pi_entropy *= entropy_cost
-    mean_loss = (pg_loss + critic_loss + pi_entropy)  # []
+    mean_loss = pg_loss + critic_loss + pi_entropy  # []
 
     metrics = {
         "total_loss": mean_loss,
@@ -415,7 +421,8 @@ def popart_impala_loss(
         r_t=rewards[:-1],
         discount_t=discount_t,
         rho_tm1=rhos,
-        stop_target_gradients=False)
+        stop_target_gradients=False,
+    )
     vtrace_targets = vtrace_errors + values[:-1]
 
     # PopArt statistics update
@@ -438,11 +445,13 @@ def popart_impala_loss(
     critic_loss = jnp.mean(jnp.square(critic_loss))
 
     # V-trace Advantage
-    q_bootstrap = jnp.concatenate([
-        vtrace_targets[1:],
-        new_values[-1:],
-    ],
-                                  axis=0)
+    q_bootstrap = jnp.concatenate(
+        [
+            vtrace_targets[1:],
+            new_values[-1:],
+        ],
+        axis=0,
+    )
     q_estimate = rewards[:-1] + discount_t * q_bootstrap
     q_estimate_norm = rlax.normalize(new_popart_state, q_estimate, indices[:-1])
     clipped_pg_rho_tm1 = jnp.minimum(1.0, rhos)
@@ -466,7 +475,7 @@ def popart_impala_loss(
     # Combine weighted sum of actor & critic losses, averaged over the sequence
     critic_loss *= baseline_cost
     entropy_loss *= entropy_cost
-    mean_loss = (policy_gradient_loss + critic_loss + entropy_loss)  # []
+    mean_loss = policy_gradient_loss + critic_loss + entropy_loss  # []
 
     metrics = {
         "total_loss": mean_loss,
@@ -560,7 +569,7 @@ def impala_loss(
     # Combine weighted sum of actor & critic losses, averaged over the sequence.
     critic_loss *= baseline_cost
     entropy_loss *= entropy_cost
-    mean_loss = (policy_gradient_loss + critic_loss + entropy_loss)  # []
+    mean_loss = policy_gradient_loss + critic_loss + entropy_loss  # []
 
     metrics = {
         "total_loss": mean_loss,

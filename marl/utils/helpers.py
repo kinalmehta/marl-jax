@@ -28,10 +28,10 @@ from marl.wrappers import SSDWrapper
 from marl.wrappers.ssd_envs.env_creator import get_env_creator
 
 
-def node_allocation(num_agents, available_gpus):
+def node_allocation(available_gpus, use_inference_server):
   available_gpus = available_gpus.split(",")
-  if len(available_gpus) > num_agents:
-    pass
+  # if len(available_gpus) > num_agents:
+  #   pass
   #   resource_dict = {"learner": ",".join(available_gpus[:num_agents])}
   #   possible_gpu_actors = len(available_gpus) - num_agents
   #   gpu_actors = []
@@ -39,7 +39,12 @@ def node_allocation(num_agents, available_gpus):
   #     resource_dict[f"gpu_actor_{i}"] = available_gpus[num_agents + i]
   #     gpu_actors.append(f"gpu_actor_{i}")
   #   return resource_dict, gpu_actors
-  return {"learner": ",".join(available_gpus)}, []
+  if len(available_gpus) == 1 or not use_inference_server:
+    return {"learner": ",".join(available_gpus)}
+  return {
+      "learner": ",".join(available_gpus[:-1]),
+      "inference_server": available_gpus[-1]
+  }  # inference_server
 
 
 def make_meltingpot_environment(seed: int,

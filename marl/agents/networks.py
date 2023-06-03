@@ -76,18 +76,18 @@ def make_haiku_networks_2(
 
 class ArrayFE(hk.Module):
 
-  def __init__(self, num_actions):
+  def __init__(self, num_actions, hidden_dim=64):
     super().__init__("array_features")
     self.num_actions = num_actions
     self._layer = hk.Sequential([
-        hk.Linear(64),
+        hk.Linear(hidden_dim),
         jax.nn.relu,
-        hk.Linear(64),
+        hk.Linear(hidden_dim),
         jax.nn.relu,
     ])
 
   def __call__(self, inputs):
-    op = self._layer(inputs["observation"]['agent_obs'])
+    op = self._layer(inputs["observation"]["agent_obs"])
     action = jax.nn.one_hot(inputs["action"], num_classes=self.num_actions)
     combined_op = jnp.concatenate([op, action], axis=-1)
     return combined_op
@@ -112,12 +112,12 @@ class ImageFE(hk.Module):
     ])
 
   def __call__(self, inputs) -> jnp.ndarray:
-    inputs_rank = jnp.ndim(inputs["observation"]['agent_obs'])
+    inputs_rank = jnp.ndim(inputs["observation"]["agent_obs"])
     batched_inputs = inputs_rank == 4
     if inputs_rank < 3 or inputs_rank > 4:
       raise ValueError("Expected input BHWC or HWC. Got rank %d" % inputs_rank)
 
-    outputs = self._cnn(inputs["observation"]['agent_obs'])
+    outputs = self._cnn(inputs["observation"]["agent_obs"])
 
     if batched_inputs:
       outputs = jnp.reshape(outputs, [outputs.shape[0], -1])  # [B, D]
