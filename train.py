@@ -23,6 +23,7 @@ from marl.agents.networks import ArrayFE
 from marl.agents.networks import ImageFE
 from marl.agents.networks import MeltingpotFE
 from marl.experiments import config as ma_config
+from marl.experiments import inference_server
 from marl.utils import helpers
 from marl.utils import lp_utils as ma_lp_utils
 from marl.utils.experiment_utils import make_experiment_logger
@@ -71,6 +72,8 @@ flags.DEFINE_string("available_gpus", "0", "Comma separated list of GPU ids.")
 flags.DEFINE_integer(
     "num_actors", 2,
     "Number of actors to use (should be less than total number of CPU cores).")
+flags.DEFINE_integer("actors_per_node", 1, "Number of actors per thread.")
+flags.DEFINE_bool("inference_server", False, "Whether to run inference server.")
 flags.DEFINE_string("experiment_dir", None,
                     "Directory to resume experiment from.")
 
@@ -235,13 +238,21 @@ def main(_):
       max_to_keep=3, directory=experiment_dir, add_uid=False)
   if FLAGS.async_distributed:
 
-    nodes_on_gpu, gpu_actors = helpers.node_allocation(
-        config.builder._config.n_agents, FLAGS.available_gpus)
+    nodes_on_gpu = helpers.node_allocation(
+        FLAGS.available_gpus,
+        FLAGS.inference_server)
     program = experiments.make_distributed_experiment(
-        experiment=config,
-        num_actors=FLAGS.num_actors,
-        gpu_actors=gpu_actors,
-        checkpointing_config=ckpt_config)
+          experiment=config,
+          num_actors=FLAGS.num_actors * FLAGS.actors_per_node,
+          inference_server_config=inference_server.InferenceServerConfig(
+              batch_size=min(8, FLAGS.num_actors // 2),
+              update_period=1,
+              timeout=datetime.timedelta(
+                  seconds=1, milliseconds=0, microseconds=0),
+          ) if FLAGS.inference_server else None,
+          num_actors_per_node=FLAGS.actors_per_node,
+          checkpointing_config=ckpt_config,
+      )
     local_resources = ma_lp_utils.to_device(
         program_nodes=program.groups.keys(), nodes_on_gpu=nodes_on_gpu)
 

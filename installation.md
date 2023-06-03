@@ -47,6 +47,24 @@
     ```bash
     pip install https://github.com/deepmind/lab2d/releases/download/release_candidate_2022-03-24/dmlab2d-1.0-cp39-cp39-manylinux_2_31_x86_64.whl
     ```
+  - <details>
+    <summary>If the above fails, compile and install</summary>
+    
+    - Installing pre-requisites
+  		```sh
+    	conda install -c conda-forge gcc=12.2 gxx=12.2 bazel=5.2
+  		```
+    - Compiling lab2d
+  		```sh
+    	git clone https://github.com/deepmind/lab2d.git
+      cd lab2d
+      bazel build -c opt --define=lua=5_2 //dmlab2d:dmlab2d_wheel
+  		```
+		- Installing the compiled wheel file
+  		```sh
+    	pip install bazel-bin/dmlab2d/dmlab2d-1.0-cp39-cp39-manylinux_._.._x86_64.whl
+  		```
+    </details>
 - install meltingpot from git [link](https://github.com/deepmind/meltingpot/)
 	```bash
 	git clone -b main https://github.com/deepmind/meltingpot

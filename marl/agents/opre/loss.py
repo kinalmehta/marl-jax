@@ -133,11 +133,13 @@ def batched_art_opre_loss(
 
     # V-trace Advantage
     # TODO: verify how batching effects concatenation
-    q_bootstrap = jnp.concatenate([
-        new_vtrace_targets[:, 1:],
-        new_values[:, -1:],
-    ],
-                                  axis=1)  # B, T, value
+    q_bootstrap = jnp.concatenate(
+        [
+            new_vtrace_targets[:, 1:],
+            new_values[:, -1:],
+        ],
+        axis=1,
+    )  # B, T, value
     q_estimate = rewards[:, :-1] + discount_t * q_bootstrap
     q_estimate_norm = rlax.normalize(new_popart_state, q_estimate,
                                      indices[:, :-1])
@@ -205,8 +207,7 @@ def batched_art_opre_loss(
     pi_entropy *= entropy_cost
     options_entropy *= options_entropy_cost
     kl_pq *= options_kl_cost
-    mean_loss = (pi_pg_loss + critic_loss + pi_entropy + options_entropy + kl_pq
-                )  # []
+    mean_loss = pi_pg_loss + critic_loss + pi_entropy + options_entropy + kl_pq  # []
 
     metrics = {
         "total_loss": mean_loss,
@@ -346,11 +347,13 @@ def batched_popart_opre_loss(
 
     # V-trace Advantage
     # TODO: verify how batching effects concatenation
-    q_bootstrap = jnp.concatenate([
-        new_vtrace_targets[:, 1:],
-        new_values[:, -1:],
-    ],
-                                  axis=1)  # B, T, value
+    q_bootstrap = jnp.concatenate(
+        [
+            new_vtrace_targets[:, 1:],
+            new_values[:, -1:],
+        ],
+        axis=1,
+    )  # B, T, value
     q_estimate = rewards[:, :-1] + discount_t * q_bootstrap
     q_estimate_norm = rlax.normalize(new_popart_state, q_estimate,
                                      indices[:, :-1])
@@ -419,8 +422,7 @@ def batched_popart_opre_loss(
     pi_entropy *= entropy_cost
     options_entropy *= options_entropy_cost
     kl_pq *= options_kl_cost
-    mean_loss = (pi_pg_loss + critic_loss + pi_entropy + options_entropy + kl_pq
-                )  # []
+    mean_loss = pi_pg_loss + critic_loss + pi_entropy + options_entropy + kl_pq  # []
 
     metrics = {
         "total_loss": mean_loss,
@@ -580,8 +582,7 @@ def batched_opre_loss(
     pi_entropy *= entropy_cost
     options_entropy *= options_entropy_cost
     kl_pq *= options_kl_cost
-    mean_loss = (pi_pg_loss + critic_loss + pi_entropy + options_entropy + kl_pq
-                )  # []
+    mean_loss = pi_pg_loss + critic_loss + pi_entropy + options_entropy + kl_pq  # []
 
     metrics = {
         "total_loss": mean_loss,

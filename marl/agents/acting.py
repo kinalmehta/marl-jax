@@ -30,12 +30,11 @@ class MAActor(core.Actor):
       variable_client: Optional[variable_utils.VariableClient] = None,
       adder: Optional[adders.Adder] = None,
   ):
-
     # Store these for later use.
     self._adder = adder
     self._variable_client = variable_client
     self._forward = forward_fn
-    self._reset_fn_or_none = getattr(forward_fn, "reset", None)
+
     self._rng = rng
     self.n_agents = n_agents
 
@@ -47,15 +46,15 @@ class MAActor(core.Actor):
       return states
 
     self._initial_states = ma_utils.merge_data(initialize_states(self._rng))
-    self._p_forward = jax.vmap(self._forward)
 
   def select_action(self, observations: types.Observations) -> types.Actions:
-
     if self._states is None:
       self._states = self._initial_states
 
-    (logits, _), new_states = self._p_forward(self._params, observations,
-                                              self._states)
+    observations = jax.tree_util.tree_map(lambda x: jnp.array(x), observations)
+    (logits, _), new_states = self._forward(self._params, observations,
+                                            self._states)
+
     actions = jax.random.categorical(next(self._rng), logits)
 
     self._prev_logits = logits
@@ -70,11 +69,6 @@ class MAActor(core.Actor):
 
     # Set the state to None so that we re-initialize at the next policy call.
     self._states = None
-
-    # Reset state of inference functions that employ stateful wrappers (eg. BIT)
-    # at the start of the episode.
-    if self._reset_fn_or_none is not None:
-      self._reset_fn_or_none()
 
   def observe(
       self,

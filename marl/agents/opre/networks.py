@@ -24,7 +24,8 @@ def make_network(environment_spec: EnvironmentSpec,
         num_actions=environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model(inputs, state)
 
   def unroll_fn(inputs, state: hk.LSTMState):
@@ -32,7 +33,8 @@ def make_network(environment_spec: EnvironmentSpec,
         num_actions=environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model.unroll(inputs, state)
 
   def initial_state_fn(batch_size=None) -> hk.LSTMState:
@@ -40,7 +42,8 @@ def make_network(environment_spec: EnvironmentSpec,
         num_actions=environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model.initial_state(batch_size)
 
   return make_haiku_networks(
@@ -61,7 +64,8 @@ def make_network_2(environment_spec: EnvironmentSpec,
         num_actions=environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model(inputs, state)
 
   def unroll_fn(inputs, state: hk.LSTMState):
@@ -69,7 +73,8 @@ def make_network_2(environment_spec: EnvironmentSpec,
         num_actions=environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model.unroll(inputs, state)
 
   def initial_state_fn(batch_size=None) -> hk.LSTMState:
@@ -77,7 +82,8 @@ def make_network_2(environment_spec: EnvironmentSpec,
         num_actions=environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model.initial_state(batch_size)
 
   def critic_fn(feat, options):
@@ -85,7 +91,8 @@ def make_network_2(environment_spec: EnvironmentSpec,
         environment_spec.actions.num_values,
         recurrent_dim=recurrent_dim,
         num_options=num_options,
-        feature_extractor=feature_extractor)
+        feature_extractor=feature_extractor,
+    )
     return model.critic(feat, options)
 
   return make_haiku_networks_2(
@@ -127,8 +134,8 @@ class OPRENetwork(hk.RNNCore):
     options_action_probs = options_action_probs.squeeze()
     values = self._value_layer_options(feat)
 
-    assert (len(options_action_probs.shape) == 2
-           ), "bad action probs shape"  # (num_options, num_actions)
+    assert len(options_action_probs.shape
+              ) == 2, "bad action probs shape"  # (num_options, num_actions)
     final_action_probs = (options_action_probs *
                           jnp.expand_dims(p_options, axis=-1)).sum(-2)
 
@@ -162,9 +169,9 @@ class OPRENetwork(hk.RNNCore):
 
     auxiliary_state = hk.BatchApply(self._embed)(
         inputs["observation"]["global"])  # B, num_agents, embedding_dim
-    auxiliary_state = jnp.reshape(auxiliary_state,
-                                  (auxiliary_state.shape[0], -1))
-    # auxiliary_state = jnp.sum(auxiliary_state, axis=1)  # B, embedding_dim
+    # auxiliary_state = jnp.reshape(auxiliary_state,
+    #                               (auxiliary_state.shape[0], -1))
+    auxiliary_state = jnp.sum(auxiliary_state, axis=1)  # B, embedding_dim
 
     q_options = self._q_options_head(auxiliary_state)  # B, num_options
     q_options = jax.nn.softmax(q_options, axis=-1)  # B, num_options

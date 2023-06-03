@@ -51,6 +51,8 @@ def run_experiment(
   # Create the networks and policy.
   network = experiment.network_factory(
       environment_specs.get_single_agent_environment_specs())
+  network.forward_fn = jax.vmap(network.forward_fn)
+
   policy = experiment.builder.make_policy(
       network, environment_specs, evaluation=False)
 
@@ -219,7 +221,7 @@ class _LearningActor(core.Actor):
     while True:
       if self._iterator.ready():
         self._learner.step()
-        batches = (self._iterator.retrieved_elements() - self._learner_steps)
+        batches = self._iterator.retrieved_elements() - self._learner_steps
         self._learner_steps += 1
         assert batches == 1, (
             "Learner step must retrieve exactly one element from the iterator"
